@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, MessageEvent } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Message } from '../users/message.entity';
 
 import { UsersService } from '../users/users.service';
 
@@ -24,13 +25,33 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    if(this.getUserId(user.userId) !== undefined ){
+      const payload = { username: user.username, sub: user.userId };
+      return {
+        access_token: this.jwtService.sign(payload),
+      };
+    }
+    return "Error: User not found";
   }
 
   async getUsers(){
     return this.usersService.getUsers();
+  }
+
+   getUserId(id: string){
+    return this.usersService.getUserId(id);
+  }
+
+   getActiveUsers(){
+    return this.usersService.getActiveUsers();
+   
+  }
+
+   getMessagesUser(id){
+    return this.usersService.getMessagesUser(id);
+  }
+
+   addMessage(id, message: Message){
+    return this.usersService.addMessage(id, message);
   }
 }
